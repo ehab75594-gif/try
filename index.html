@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نيلة – تجربة الأداة (نسخة تجريبية)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1A1A1A;--mute:#4A4A45;--line:#E4E2DA;--ground:#FAFAF7;--green:#0F6B5C;--mint:#D5E8E3;--deep:#0A4A40;--err:#8A2A12;--errbg:#FBE9E4}
+*{box-sizing:border-box}
+body{margin:0;font-family:Cairo,system-ui,sans-serif;color:var(--ink);background:var(--ground);line-height:1.7}
+button,input,textarea{font-family:inherit;font-size:15px}
+:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+.demo{background:var(--ink);color:#fff;font-size:13px;text-align:center;padding:6px 12px}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 5vw;border-bottom:1px solid var(--line)}
+header strong{font-size:22px}
+nav{font-size:14px;color:var(--mute)}
+main{display:flex;gap:40px;padding:32px 5vw;max-width:1000px;margin:auto;flex-wrap:wrap}
+.ph{background:var(--line);color:var(--mute);display:flex;align-items:center;justify-content:center;text-align:center;font-size:13px;border-radius:12px;overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover}
+.gallery{flex:1 1 300px;min-height:400px}
+.info{flex:1 1 320px;display:flex;flex-direction:column;gap:14px}
+h1{margin:0;font-size:28px;line-height:1.3}
+.price{font-size:22px;font-weight:600}.price s{font-size:15px;color:var(--mute);font-weight:400}
+.sizes{display:flex;gap:8px}.sizes span{border:1px solid #B8B6AC;border-radius:8px;padding:8px 16px}
+.btn{min-height:48px;border-radius:8px;border:2px solid var(--green);background:var(--green);color:#fff;font-weight:700;padding:0 22px;cursor:pointer}
+.btn.out{background:#fff;color:var(--green)}
+.btn.sec{background:#fff;color:var(--ink);border:1px solid #B8B6AC;font-weight:400}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.scrim{position:fixed;inset:0;background:rgba(26,26,26,.6);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+.scrim[hidden]{display:none}
+.modal{background:#fff;border-radius:16px;padding:24px;width:100%;max-width:700px;max-height:94vh;overflow:auto;display:flex;flex-direction:column;gap:12px;position:relative}
+.modal h2{margin:0;font-size:22px}
+.x{position:absolute;top:12px;left:12px;border:0;background:none;font-size:26px;cursor:pointer;color:var(--mute);min-width:44px;min-height:44px}
+.steps{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--mute)}
+.steps b{border-radius:12px;padding:1px 10px;background:var(--mint);color:var(--deep)}.steps b.on{background:var(--green);color:#fff}
+.muted{color:var(--mute);font-size:14px;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid #B8B6AC;background:#fff;border-radius:20px;padding:5px 13px;font-size:13px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--mint);border-color:var(--green);color:var(--deep);font-weight:600}
+.drop{display:flex;gap:12px}
+.zone{flex:1;min-height:150px;border:2px dashed var(--green);border-radius:12px;color:var(--green);font-weight:600;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;cursor:pointer;background-size:cover;background-position:center;overflow:hidden;position:relative}
+.zone.has{border-style:solid;color:transparent}
+.refbox{width:110px;font-size:12px;color:var(--mute);text-align:center}.refbox .ph{height:104px;margin-bottom:4px}
+.err{background:var(--errbg);color:var(--err);border-radius:8px;padding:10px 12px;font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row .btn{flex:1}
+textarea{width:100%;height:92px;border:1px solid #B8B6AC;border-radius:8px;padding:10px 12px;resize:none;line-height:1.6}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--green)}
+.res{display:flex;gap:16px;flex-wrap:wrap}
+.pane{flex:1 1 220px;position:relative}
+.pane .ph{height:300px;background-size:cover;background-position:center}
+.pane.after .ph{background-color:var(--mint);color:var(--deep);flex-direction:column;gap:6px;padding:16px;position:relative}
+.pane.after.load .ph{opacity:.5}
+.pane .tag{position:absolute;bottom:8px;right:8px;background:#fff;border-radius:6px;padding:2px 8px;font-size:12px}
+.pane .tint{position:absolute;inset:0;background:var(--green);opacity:.25;border-radius:12px}
+.comp{display:flex;gap:10px;flex-wrap:wrap}
+.comp label{flex:1 1 180px;display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px;cursor:pointer}
+.comp .ph{width:44px;height:44px;border-radius:6px;flex:none}
+.total{display:flex;justify-content:space-between;font-size:15px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:14px;z-index:20}
+.toast[hidden]{display:none}
+@media (prefers-reduced-motion:no-preference){.bar i{transition:width .15s linear}}
+@media (max-width:560px){.scrim{align-items:flex-end;padding:0}.modal{border-radius:20px 20px 0 0;max-width:none}.drop{flex-direction:column}.refbox{width:100%}}
+</style>
+</head>
+<body>
+<div class="demo">نسخة تجريبية للعرض فقط. النتائج غير حقيقية ولا يتم رفع أي صورة، الصورة تبقى في متصفحك وتُحذف عند الإغلاق.</div>
+<header><strong id="brand"></strong><nav>الرئيسية · الجديد · السلة (<span id="cart">0</span>)</nav></header>
+
+<main>
+  <div class="gallery ph" id="gallery"></div>
+  <div class="info">
+    <h1 id="pname"></h1>
+    <div class="price"><span id="pprice"></span> <s id="pold"></s></div>
+    <p class="muted" id="pdesc"></p>
+    <div class="sizes" id="sizes"></div>
+    <button class="btn out" id="open">جرّب القطعة عليك</button>
+    <button class="btn" id="addMain">أضف إلى السلة</button>
+  </div>
+</main>
+
+<div class="scrim" id="scrim" hidden>
+ <div class="modal" role="dialog" aria-modal="true" aria-labelledby="t1">
+  <button class="x" id="close" aria-label="إغلاق">×</button>
+
+  <section data-step="1">
+    <div class="steps"><b class="on">1</b><b>2</b> الخطوة 1 من 2</div>
+    <h2 id="t1">شوف القطعة عليك</h2>
+    <p class="muted">ارفع صورة واضحة لك بالكامل، واقف ومواجه للكاميرا وبإضاءة كويسة.</p>
+    <div class="drop">
+      <label class="zone" id="zone" tabindex="0">اضغط لاختيار صورة (JPG أو PNG حتى 10MB)<input type="file" id="file" accept="image/jpeg,image/png" hidden></label>
+      <div class="refbox"><div class="ph" id="refph">صورة مرجعية</div>واقف، من الأمام، الجسم كامل</div>
+    </div>
+    <div class="err" id="err" hidden></div>
+    <label class="muted"><input type="checkbox" id="consent"> أوافق على معالجة صورتي لعرض التجربة فقط. تُحذف صورتي فور ظهور النتيجة أو عند مغادرة الصفحة.</label>
+    <div class="row"><button class="btn" id="next" disabled>التالي: وصف المكان (اختياري)</button><button class="btn sec" id="skip1" disabled>تخطي وابدأ التجربة</button></div>
+  </section>
+
+  <section data-step="2" hidden>
+    <div class="steps"><b>1</b><b class="on">2</b> الخطوة 2 من 2</div>
+    <h2>فين تحب تكون؟ <span class="muted">(اختياري)</span></h2>
+    <p class="muted">صف المكان والأجواء وهنركّبك فيه وانت لابس القطعة. تقدر تتخطى الخطوة دي.</p>
+    <label>وصف المكان<textarea id="scene" maxlength="150" placeholder="مثال: شاطئ هادي وقت الغروب، رمل ناعم وإضاءة دافئة"></textarea></label>
+    <span class="muted"><span id="count">0</span> / 150 حرف</span>
+    <div class="chips" id="presets"></div>
+    <div class="chips" id="times"></div>
+    <p class="muted">الوصف يغيّر الخلفية فقط، والقطعة بتفضل زي ما هي.</p>
+    <div class="row"><button class="btn" id="start">ابدأ التجربة</button><button class="btn sec" id="skip2">تخطي</button><button class="btn sec" id="back">رجوع</button></div>
+  </section>
+
+  <section data-step="3" hidden>
+    <h2>بنجهّز صورتك</h2>
+    <p class="muted" id="gtxt">بنقرأ الصورة...</p>
+    <div class="bar" role="progressbar"><i id="gbar"></i></div>
+  </section>
+
+  <section data-step="4" hidden>
+    <h2 id="rtitle"></h2>
+    <div class="res">
+      <div class="pane"><div class="ph" id="before"></div><span class="tag">صورتك الأصلية</span></div>
+      <div class="pane after" id="afterPane"><div class="ph" id="after"></div><span class="tag" id="atag"></span></div>
+    </div>
+    <div><b>كمّل الطقم</b> <span class="muted">اختار قطعة وهنوريك شكلها معاها على صورتك</span></div>
+    <div class="comp" id="comp"></div>
+    <div class="total"><span id="tlabel"></span><b id="ttotal"></b></div>
+    <div class="row"><button class="btn" id="addSet"></button><button class="btn out" id="again">صورة أخرى</button></div>
+    <p class="muted">النتيجة توضيحية والمقاس غير محسوب. تُحذف صورتك عند إغلاق النافذة.</p>
+  </section>
+ </div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+/* ===== بدّل القيم دي ببيانات براند حقيقي =====
+   image / resultImage: ضع مسار صورة (مثال: "img/tee.jpg"). لو سيبتها فاضية يظهر مكان رمادي. */
+const CONFIG = {
+  brand: "نيلة",
+  product: { name: "تيشيرت قطن أوفر سايز", price: 650, oldPrice: 790, image: "",
+             desc: "قطن 100% بقصة واسعة، مناسب للاستخدام اليومي.", sizes: ["S","M","L","XL"] },
+  complements: [
+    { id: "pants",  name: "بنطلون كارجو",   price: 950,  image: "" },
+    { id: "jacket", name: "جاكيت دنم قصير", price: 1100, image: "" },
+    { id: "belt",   name: "حزام جلد بني",   price: 380,  image: "" }
+  ],
+  /* صور نتائج جاهزة للعرض. المفتاح = القطع المختارة مفصولة بـ + ، "main" = التيشيرت فقط. مثال: "main": "img/r1.jpg", "pants": "img/r2.jpg" */
+  resultImages: {},
+  referenceImage: "",
+  presets: ["شاطئ وقت الغروب","مكتب بإضاءة نهار","حفلة زفاف مسائية","شارع في وسط البلد","كافيه هادي","حديقة في الصباح"],
+  times: ["صباح","ظهر","غروب","ليل"]
+};
+/* ============================================== */
+const $ = id => document.getElementById(id);
+const fmt = n => n.toLocaleString("en-US") + " ج.م";
+const P = CONFIG.product;
+const S = { url: null, scene: "", time: "", picked: new Set(), timer: null };
+
+function fill(el, src, label){ el.textContent = ""; if(src){ const i = new Image(); i.src = src; i.alt = label; el.append(i); } else el.textContent = label; }
+function toast(t){ const e = $("toast"); e.textContent = t; e.hidden = false; setTimeout(() => e.hidden = true, 2200); }
+function showStep(n){ document.querySelectorAll("[data-step]").forEach(s => s.hidden = s.dataset.step != n); const h = document.querySelector('[data-step="'+n+'"] h2'); if(h){ h.setAttribute("tabindex","-1"); h.focus(); } }
+
+/* صفحة المنتج */
+$("brand").textContent = CONFIG.brand;
+$("pname").textContent = P.name; $("pprice").textContent = fmt(P.price); $("pold").textContent = fmt(P.oldPrice); $("pdesc").textContent = P.desc;
+$("sizes").innerHTML = P.sizes.map(s => "<span>"+s+"</span>").join("");
+fill($("gallery"), P.image, "صورة المنتج (بدّلها من CONFIG)");
+fill($("refph"), CONFIG.referenceImage, "صورة مرجعية");
+let cart = 0; const addCart = n => { cart += n; $("cart").textContent = cart; toast("اتضافت للسلة"); };
+$("addMain").onclick = () => addCart(1);
+
+/* فتح وإغلاق: الصورة تُحذف دايمًا عند الإغلاق */
+function reset(){
+  clearInterval(S.timer); if(S.url) URL.revokeObjectURL(S.url);
+  S.url = null; S.scene = ""; S.time = ""; S.picked.clear();
+  $("file").value = ""; $("consent").checked = false; $("scene").value = ""; $("count").textContent = 0;
+  const z = $("zone"); z.classList.remove("has"); z.style.backgroundImage = ""; z.firstChild.textContent = "اضغط لاختيار صورة (JPG أو PNG حتى 10MB)";
+  $("err").hidden = true; $("next").disabled = $("skip1").disabled = true;
+  document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed","false"));
+}
+const openM = () => { reset(); $("scrim").hidden = false; showStep(1); };
+const closeM = () => { $("scrim").hidden = true; reset(); $("open").focus(); };
+$("open").onclick = openM; $("close").onclick = closeM;
+$("scrim").addEventListener("click", e => { if(e.target === $("scrim")) closeM(); });
+document.addEventListener("keydown", e => { if(e.key === "Escape" && !$("scrim").hidden) closeM(); });
+window.addEventListener("pagehide", reset);
+
+/* الخطوة 1: رفع الصورة (محليًا فقط) */
+$("zone").addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); $("file").click(); } });
+$("file").onchange = e => {
+  const f = e.target.files[0]; if(!f) return;
+  const bad = !/^image\/(jpeg|png)$/.test(f.type) ? "الملف لازم يكون JPG أو PNG." : f.size > 10*1024*1024 ? "الصورة أكبر من 10MB. اختار صورة أصغر." : "";
+  const er = $("err"); er.hidden = !bad; er.textContent = bad; if(bad) return;
+  if(S.url) URL.revokeObjectURL(S.url); S.url = URL.createObjectURL(f);
+  const z = $("zone"); z.classList.add("has"); z.style.backgroundImage = "url("+S.url+")";
+  sync();
+};
+const sync = () => { $("next").disabled = $("skip1").disabled = !(S.url && $("consent").checked); };
+$("consent").onchange = sync;
+$("next").onclick = () => showStep(2);
+$("skip1").onclick = () => generate(false);
+
+/* الخطوة 2: وصف المكان (اختياري) */
+$("presets").innerHTML = CONFIG.presets.map(t => '<button type="button" class="chip" aria-pressed="false">'+t+'</button>').join("");
+$("times").innerHTML = '<span class="muted">الوقت:</span>' + CONFIG.times.map(t => '<button type="button" class="chip" aria-pressed="false">'+t+'</button>').join("");
+$("presets").onclick = e => { const c = e.target.closest(".chip"); if(!c) return; $("scene").value = c.textContent; $("count").textContent = c.textContent.length;
+  document.querySelectorAll("#presets .chip").forEach(x => x.setAttribute("aria-pressed", x === c)); };
+$("times").onclick = e => { const c = e.target.closest(".chip"); if(!c) return; const on = c.getAttribute("aria-pressed") !== "true";
+  document.querySelectorAll("#times .chip").forEach(x => x.setAttribute("aria-pressed","false")); c.setAttribute("aria-pressed", on); S.time = on ? c.textContent : ""; };
+$("scene").oninput = e => $("count").textContent = e.target.value.length;
+$("back").onclick = () => showStep(1);
+$("start").onclick = () => generate(true);
+$("skip2").onclick = () => generate(false);
+
+/* الخطوة 3: توليد وهمي */
+function generate(useScene){
+  S.scene = useScene ? $("scene").value.trim() : ""; if(!useScene) S.time = "";
+  showStep(3); let p = 0;
+  const msgs = ["بنقرأ الصورة...", "بنركّب القطعة عليك...", S.scene ? "بنضبط المكان والإضاءة..." : "بنراجع التفاصيل..."];
+  S.timer = setInterval(() => { p += 4; $("gbar").style.width = p + "%"; $("gtxt").textContent = msgs[Math.min(2, Math.floor(p/34))];
+    if(p >= 100){ clearInterval(S.timer); showResult(); } }, 120);
+}
+
+/* الخطوة 4: النتيجة والمكمّلات */
+function key(){ return S.picked.size ? [...S.picked].join("+") : "main"; }
+function names(){ return [P.name, ...CONFIG.complements.filter(c => S.picked.has(c.id)).map(c => c.name)]; }
+function total(){ return P.price + CONFIG.complements.filter(c => S.picked.has(c.id)).reduce((a,c) => a + c.price, 0); }
+function paintAfter(){
+  const a = $("after"), src = CONFIG.resultImages[key()]; a.textContent = ""; a.style.backgroundImage = "";
+  if(src){ fill(a, src, "النتيجة"); }
+  else { if(S.url) a.style.backgroundImage = "url("+S.url+")"; const t = document.createElement("div"); t.className = "tint"; a.append(t);
+    const l = document.createElement("div"); l.style.cssText = "position:relative;background:#fff;border-radius:8px;padding:6px 10px;font-size:13px;margin:auto"; l.textContent = "هنا تظهر الصورة المولدة بـ: " + names().join(" + "); a.append(l); }
+  $("atag").textContent = S.scene ? "المكان: " + S.scene : "النتيجة بعد التجربة";
+  $("tlabel").textContent = names().length > 1 ? names().length + " قطع في الطقم" : "القطعة الأساسية";
+  $("ttotal").textContent = "الإجمالي: " + fmt(total()); $("addSet").textContent = names().length > 1 ? "أضف الطقم للسلة (" + names().length + " قطع)" : "أضف إلى السلة";
+}
+function showResult(){
+  showStep(4); $("rtitle").textContent = P.name;
+  const b = $("before"); b.textContent = ""; b.style.backgroundImage = S.url ? "url("+S.url+")" : "";
+  $("comp").innerHTML = CONFIG.complements.map(c => '<label><input type="checkbox" value="'+c.id+'"'+(S.picked.has(c.id) ? " checked" : "")+'><div class="ph">صورة</div><span><b>'+c.name+'</b><br>'+fmt(c.price)+'</span></label>').join("");
+  paintAfter();
+}
+$("comp").onchange = e => { const id = e.target.value; e.target.checked ? S.picked.add(id) : S.picked.delete(id);
+  const pane = $("afterPane"); pane.classList.add("load"); $("atag").textContent = "جاري تحديث الصورة...";
+  clearTimeout(S.t2); S.t2 = setTimeout(() => { pane.classList.remove("load"); paintAfter(); }, 1500); };
+$("addSet").onclick = () => { addCart(names().length); closeM(); };
+$("again").onclick = () => { reset(); showStep(1); };
+</script>
+</body>
+</html>
